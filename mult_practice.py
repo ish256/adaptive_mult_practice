@@ -4,7 +4,10 @@ import pandas as pd
 import argparse
 
 
-def mult_practice(mode):
+def mult_practice(mode=1):
+
+    valVect = np.arange(2, 10)
+    valArray = np.meshgrid(valVect, valVect)
 
     # make df to hold data
     df = pd.DataFrame(

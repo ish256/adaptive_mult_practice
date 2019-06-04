@@ -8,7 +8,8 @@ valArray1, valArray2 = np.meshgrid(valVect, valVect)
 valArray = np.array([valArray1.flatten(), valArray2.flatten()])
 
 print(valArray.shape)
-
+tempss = valArray[0, 1]
+print(tempss)
 # initial drawing scheme
 numChoices = np.size(valArray, 1)
 probArray = np.ones((numChoices, 1)) * (1/numChoices)

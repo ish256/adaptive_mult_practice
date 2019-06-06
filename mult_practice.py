@@ -17,24 +17,18 @@ def mult_practice(mode=1):
     # set up problem according to mode
     if mode == 1:
         # set up easy problems
-        # val1 = np.random.randint(3, 9+1)
-        # val2 = np.random.randint(3, 9+1)
-        valVect1 = np.arange(3, 10)
-        valVect2 = np.arange(3, 10)
-        #valVect1 = np.arange(4, 6)
-        #valVect2 = np.arange(4, 6)
+        #valVect1 = np.arange(3, 10)
+        #valVect2 = np.arange(3, 10)
+        valVect1 = np.arange(4, 6)
+        valVect2 = np.arange(4, 6)
 
     if mode == 2:
         # set up medium problems
-        # val1 = np.random.randint(10, 99+1)
-        # val2 = np.random.randint(3, 9+1)
         valVect1 = np.arange(2, 10)
         valVect2 = np.arange(10, 100)
 
     if mode == 3:
         # set up hard problem
-        # val1 = np.random.randint(10, 99+1)
-        # val2 = np.random.randint(10, 99+1)
         valVect1 = np.arange(10, 100)
         valVect2 = np.arange(10, 100)
 
@@ -52,7 +46,6 @@ def mult_practice(mode=1):
 
         # sample from distribution with problems
         drawInd = np.random.choice(numChoices, 1, p=probArray.flatten())
-        print(drawInd)
         val1 = valArray[0, drawInd]
         val2 = valArray[1, drawInd]
 
@@ -77,11 +70,20 @@ def mult_practice(mode=1):
         else:
             correctAndIncorrectCounts[drawInd, 1] += 1
 
+        # penalize correct answers that take too long (i.e lose half correct points after 10 seconds)
+        halfLife = 15
+        correctAndIncorrectCounts[drawInd, 0] = correctAndIncorrectCounts[drawInd, 0] * (
+            2**(-1*timeToAns/halfLife))
+
         # update probabilities based on counts
+        incorrectAnswerPenaltyMultiple = 3
         probArray = 1-betaincinv(
-            correctAndIncorrectCounts[:, 0], correctAndIncorrectCounts[:, 1], 1/(1+2))
+            correctAndIncorrectCounts[:, 0], correctAndIncorrectCounts[:, 1], 1/(1+incorrectAnswerPenaltyMultiple))
+
+        # change this to a baysian update
         probArray = probArray/sum(probArray)
         print(probArray)
+
         # add response to db
         numAnsInDB = df.shape[0]  # total number of responses
         curTime = pd.Timestamp.now().strftime('%B %d, %Y, %r')

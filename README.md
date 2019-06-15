@@ -19,8 +19,8 @@ Screen Shot of it in action:
   - A summary spreadsheet specifying each problem encountered, the time taken on each problem, and wether each problem was answered correctly is produced for each session
 - Adaptive difficulty:
   - Mult Practice learns and identifies problems that the user needs more practice automatically and targets those problems
-    - Uses Baysian reweighting to learn the users strengths and weaknesses
-    - weak areas are those that the user answers incorrectly or those answered correctly but with a significant amount of time taken
+    - Uses Bayesian reweighting to learn the users strengths and weaknesses
+    - Weak areas are those that the user answers incorrectly or those answered correctly but with a significant amount of time taken
 
 ## Requirements
 
@@ -42,7 +42,7 @@ pip install requirements.txt
 
 ## Usage
 
-Use Adpative Mult Practice by specifying the challenge mode:
+Use Adpative Mult Practice by specifying the difficulty:
 
 ```shell
 python mult_practice.py 1

@@ -81,7 +81,7 @@ def mult_practice(mode=1):
         # calculate posterior using bayesian update and assign as new prior
         priorProbArray = conditionalProbArray*priorProbArray / \
             sum(conditionalProbArray*priorProbArray)
-        print(priorProbArray)
+        # print(priorProbArray)
 
         # add response to db
         numAnsInDB = df.shape[0]  # total number of responses

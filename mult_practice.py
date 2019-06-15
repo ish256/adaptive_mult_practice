@@ -17,10 +17,8 @@ def mult_practice(mode=1):
     # set up problem according to mode
     if mode == 1:
         # set up easy problems
-        #valVect1 = np.arange(3, 10)
-        #valVect2 = np.arange(3, 10)
-        valVect1 = np.arange(4, 6)
-        valVect2 = np.arange(4, 6)
+        valVect1 = np.arange(3, 10)
+        valVect2 = np.arange(3, 10)
 
     if mode == 2:
         # set up medium problems
@@ -35,17 +33,17 @@ def mult_practice(mode=1):
     valArray1, valArray2 = np.meshgrid(valVect1, valVect2)
     valArray = np.array([valArray1.flatten(), valArray2.flatten()])
 
-    # initialize probability array
+    # initialize prior probability as uniform distribution
     numChoices = np.size(valArray, 1)
-    probArray = np.ones((numChoices, 1)) * (1/numChoices)
-    print(probArray)
+    priorProbArray = np.ones(numChoices) * (1/numChoices)
+    # print(priorProbArray)
     #  intialize correct vs incorrect counts (col1 for correct, col2 for incorrect )
     correctAndIncorrectCounts = np.ones((numChoices, 2))
 
     while True:
 
         # sample from distribution with problems
-        drawInd = np.random.choice(numChoices, 1, p=probArray.flatten())
+        drawInd = np.random.choice(numChoices, 1, p=priorProbArray.flatten())
         val1 = valArray[0, drawInd]
         val2 = valArray[1, drawInd]
 
@@ -77,12 +75,13 @@ def mult_practice(mode=1):
 
         # update probabilities based on counts
         incorrectAnswerPenaltyMultiple = 3
-        probArray = 1-betaincinv(
+        conditionalProbArray = 1-betaincinv(
             correctAndIncorrectCounts[:, 0], correctAndIncorrectCounts[:, 1], 1/(1+incorrectAnswerPenaltyMultiple))
 
-        # change this to a baysian update
-        probArray = probArray/sum(probArray)
-        print(probArray)
+        # calculate posterior using bayesian update and assign as new prior
+        priorProbArray = conditionalProbArray*priorProbArray / \
+            sum(conditionalProbArray*priorProbArray)
+        print(priorProbArray)
 
         # add response to db
         numAnsInDB = df.shape[0]  # total number of responses

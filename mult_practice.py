@@ -22,16 +22,22 @@ def mult_practice(mode=1):
 
     if mode == 2:
         # set up medium problems
-        valVect1 = np.arange(2, 10)
-        valVect2 = np.arange(10, 100)
+        valVect1 = np.arange(10, 100)
+        valVect2 = np.arange(2, 10)
 
     if mode == 3:
-        # set up hard problem
+        # set up hard problem (problem is that )
         valVect1 = np.arange(10, 100)
         valVect2 = np.arange(10, 100)
 
     valArray1, valArray2 = np.meshgrid(valVect1, valVect2)
-    valArray = np.array([valArray1.flatten(), valArray2.flatten()])
+
+    # make sure to only do upper diagonal
+    if mode == 2:
+        valArray = np.array([valArray1.flatten(), valArray2.flatten()])
+    else:
+        valArray = np.array([valArray1[np.triu_indices(len(valArray1))].flatten(
+        ), valArray2[np.triu_indices(len(valArray2))].flatten()])
 
     # initialize prior probability as uniform distribution
     numChoices = np.size(valArray, 1)
@@ -48,7 +54,7 @@ def mult_practice(mode=1):
         val2 = valArray[1, drawInd]
 
         strPt1 = '{val1}'.format(val1=int(val1))
-        strPt1 = strPt1.rjust(4)
+        strPt1 = strPt1.rjust(5) if mode == 3 else strPt1.rjust(4)
         print(strPt1+'\n x {val2} \n _____'.format(val2=int(val2)))
 
         # get response and time it

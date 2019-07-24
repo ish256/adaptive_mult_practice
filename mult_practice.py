@@ -4,6 +4,49 @@ import pandas as pd
 import argparse
 from scipy.special import betaincinv
 
+import sqlite3
+
+connection = sqlite3.connect("myTable.db")
+
+
+def prepareSqlDatabase(connection):
+    # cursor
+    crsr = connection.cursor()
+
+    # check if table exists
+    """
+    try:
+        sql_command = "SELECT name FROM sqlite_master WHERE type='table' AND name='{}'".format(
+            "emp")
+        crsr.execute(sql_command)
+    except:
+        """
+    # SQL command to create a table in the database
+    sql_command = """CREATE TABLE emp (  
+    timeStamp TEXT PRIMARY KEY,  
+    mode INTEGER,  
+    topVal INTEGER,  
+    botVal INTEGER,  
+    ansTime NUMERIC,
+    correct INTEGER);"""
+
+    # execute the statement
+    crsr.execute(sql_command)
+
+    return crsr
+
+
+def insertIntoDBCommand(crsr, inputArr):
+
+    # another SQL command to insert the data in the table
+    sql_command = """INSERT INTO emp VALUES ('{}', {}, {}, {}, {},{});""".format(inputArr[0], inputArr[1],
+                                                                                 int(inputArr[2]), int(inputArr[3]), inputArr[4], inputArr[5])
+    crsr.execute(sql_command)
+
+    # To save the changes in the files. Never skip this.
+    # If we skip this, nothing will be saved in the database.
+    connection.commit()
+
 
 def mult_practice(mode=1):
 
@@ -13,6 +56,9 @@ def mult_practice(mode=1):
     # make df to hold data
     df = pd.DataFrame(
         columns=['timeStamp', 'mode', 'topVal', 'botVal', 'ansTime', 'correct'])
+
+    # prepare sql db
+    crsr = prepareSqlDatabase(connection)
 
     # set up problem according to mode
     if mode == 1:
@@ -92,11 +138,16 @@ def mult_practice(mode=1):
         # add response to db
         numAnsInDB = df.shape[0]  # total number of responses
         curTime = pd.Timestamp.now().strftime('%B %d, %Y, %r')
-        df.loc[numAnsInDB] = [curTime, mode,
-                              val1, val2, timeToAns, successCheck]
+        inputArr = [curTime, mode,
+                    val1, val2, timeToAns, successCheck]
 
+        df.loc[numAnsInDB] = inputArr
         # save out response
+
         df.to_csv('mult_practice_history.csv')
+
+        # save to sql
+        insertIntoDBCommand(crsr, inputArr)
 
 
 if __name__ == "__main__":
